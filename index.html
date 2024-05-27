@@ -165,7 +165,13 @@
 
       let tracking_last = false;
       function ProcessGamepad(gamepad, hand,source) {
-
+        if(hand === "right"){
+          tracking_last = tracking;
+          tracking = gamepad.buttons.length >= 1 && gamepad.buttons[1].pressed;
+          if(tracking_last !== tracking) {
+            let pulse = source.gamepad.hapticActuators[0].pulse(tracking_last ? 0.8 : 0.2, 100);
+          }
+        }
 
       }
 
