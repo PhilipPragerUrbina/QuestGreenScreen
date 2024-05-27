@@ -165,7 +165,7 @@
 
       let tracking_last = false;
       function ProcessGamepad(gamepad, hand,source) {
-        if(hand.left){
+        if(hand === "left"){
           tracking_last = tracking;
           tracking = gamepad.buttons.length >= 1 && gamepad.buttons[1].pressed;
           if(tracking_last !== tracking) {
