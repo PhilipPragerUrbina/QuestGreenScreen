@@ -14,6 +14,11 @@
           <summary>Webxr for VFX tracking</summary>
           <p>
             Can we use webxr and the oculus quest for vfx motion tracking?
+            Hold down grip button to record.
+            The positions of the two controllers will be saved in a binary file.
+            The file contains two int32 that say the # of controllers and then the number of matrices per controller.
+            Then all the float32 matrix elements in group of 16 for controller 1.
+             Then controller 2.
           </p>
           <div id="session-info"></div>
           <div id="pose"></div>
@@ -154,9 +159,11 @@
         }
       }
 
-
+      let tracking_last = false;
       function ProcessGamepad(gamepad, hand,source) {
-        if (gamepad.buttons.length >= 1 && gamepad.buttons[1].pressed) {
+        tracking_last = tracking;
+        tracking = gamepad.buttons.length >= 1 && gamepad.buttons[1].pressed;
+        if(tracking_last !== tracking) {
           let pulse = source.gamepad.hapticActuators[0].pulse(0.8, 100);
         }
       }
