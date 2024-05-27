@@ -162,7 +162,11 @@
         let input_source_id = 0;
         for (let inputSource of session.inputSources) {
           if (inputSource.targetRayMode === 'tracked-pointer' && tracking) {
+            if(typeof transforms_list[input_source_id] === 'undefined') {
+              transforms_list[input_source_id] = []
+            }
             transforms_list[input_source_id].push(targetRayPose.transform.matrix)
+
           }
           input_source_id++;
         }
