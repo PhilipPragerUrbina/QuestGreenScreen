@@ -48,7 +48,7 @@
       }
 
       function checkSupportedState() {
-        navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
+        navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
           if (supported) {
             xrButton.innerHTML = 'Enter AR';
           } else {
@@ -75,7 +75,7 @@
       function onButtonClicked() {
         if (!xrSession) {
             // Ask for an optional DOM Overlay, see https://immersive-web.github.io/dom-overlays/
-            navigator.xr.requestSession('immersive-ar', {
+            navigator.xr.requestSession('immersive-vr', {
                 optionalFeatures: ['dom-overlay'],
                 domOverlay: {root: document.getElementById('overlay')}
             }).then(onSessionStarted, onRequestSessionError);
