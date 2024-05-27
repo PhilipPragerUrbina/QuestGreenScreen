@@ -20,9 +20,9 @@
           <div id="warning-zone"></div>
           <button id="xr-button" class="barebones-button" disabled>XR not found</button>
         </details>
+        <button id = "save-button" onclick="save_file()">Save recording</button>
       </header>
     </div>
-    <div id="output"></div>
     <main style='text-align: center;'>
       <p>Click 'Enter AR' to see content</p>
     </main>
@@ -109,22 +109,68 @@
         gl = null;
       }
 
+      let transforms_list = []
+      let saved_file = null;
+
+      function save_file(){
+        // Write header with number of trackers and then number of matrices
+        if(transforms_list.length === 0) return;
+        let header_array = new Uint32Array(2)
+        header_array[0] = transforms_list.length
+        header_array[1] = transforms_list[0].length
+        // Write float data
+        let data_array = new Float32Array(transforms_list[0].length * 16 * transforms_list.length)
+
+        for (let k = 0; k < transforms_list.length; k++) {
+          for (let i = 0; i < transforms_list[0].length; i++) {
+            for (let j = 0; j < 16; j++) {
+              data_array[transforms_list[0].length * k + i*16 + j] = transforms_list[k][i][j];
+            }
+          }
+        }
+
+        // Write to file
+        let data = new Blob([data_array], {type: 'application/octet-stream'});
+
+        if (saved_file !== null) {
+          window.URL.revokeObjectURL(saved_file);
+        }
+        saved_file = window.URL.createObjectURL(data);
+      }
+
+
+      let tracking = false;
       function updateInputSources(session, frame, refSpace) {
+        let input_source_id = 0;
         for (let inputSource of session.inputSources) {
           let targetRayPose = frame.getPose(inputSource.targetRaySpace, refSpace);
           if (!targetRayPose) {
             continue;
           }
-          if (inputSource.targetRayMode == 'tracked-pointer') {
-            //todo add output
-            console.log(targetRayPose.transform)
+          if (inputSource.targetRayMode === 'tracked-pointer' && tracking) {
+            transforms_list[input_source_id].push(targetRayPose.transform.matrix)
           }
+          input_source_id++;
         }
       }
+
+
+      function ProcessGamepad(gamepad, hand,source) {
+        if (gamepad.buttons.length >= 1 && gamepad.buttons[1].pressed) {
+          let pulse = source.gamepad.hapticActuators[0].pulse(0.8, 100);
+        }
+      }
+
 
       function onXRFrame(t, frame) {
         let session = frame.session;
         session.requestAnimationFrame(onXRFrame);
+
+        for (let source of session.inputSources) {
+          if (source.gamepad) {
+            ProcessGamepad(source.gamepad, source.handedness,source);
+          }
+        }
 
         updateInputSources(session, frame, refSpace);
 
