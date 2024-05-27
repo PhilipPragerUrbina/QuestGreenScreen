@@ -22,6 +22,7 @@
         </details>
       </header>
     </div>
+    <div id="output"></div>
     <main style='text-align: center;'>
       <p>Click 'Enter AR' to see content</p>
     </main>
@@ -115,6 +116,7 @@
             continue;
           }
           if (inputSource.targetRayMode == 'tracked-pointer') {
+            //todo add output
             console.log(targetRayPose.transform)
           }
         }
