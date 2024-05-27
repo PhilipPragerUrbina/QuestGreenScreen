@@ -27,6 +27,7 @@
           <button id="xr-button" class="barebones-button" disabled>XR not found</button>
         </details>
         <button id = "save-button">Save recording</button>
+        <a href="" id="save-ref">Click here to download your recording file</a>
       </header>
     </div>
     <main style='text-align: center;'>
@@ -122,6 +123,7 @@
         // Write header with number of trackers and then number of matrices
         if(transforms_list.length === 0) {
           console.log("No recording yet.")
+          document.getElementById("save-button").innerText = "No recording yet.";
           return;}
         let header_array = new Uint32Array(2)
         header_array[0] = transforms_list.length
@@ -144,6 +146,8 @@
           window.URL.revokeObjectURL(saved_file);
         }
         saved_file = window.URL.createObjectURL(data);
+        document.getElementById("save-ref").href = saved_file;
+        document.getElementById("save-button").innerText = "Saved, hit the link.";
       }
 
       document.getElementById("save-button").addEventListener("click", save_file)
