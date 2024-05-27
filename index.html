@@ -19,7 +19,7 @@
             The file contains two int32 that say the # of controllers and then the number of matrices per controller.
             Then all the float32 matrix elements in group of 16 for controller 1.
              Then controller 2.
-            v0.6
+            v0.7
           </p>
           <div id="session-info"></div>
           <div id="pose"></div>
@@ -123,6 +123,7 @@
 
       let transforms_list = []
       let saved_file = null;
+      let last_time = Date.now()
 
       function save_file(){
         // Write header with number of trackers and then number of matrices
@@ -152,7 +153,7 @@
         }
         saved_file = window.URL.createObjectURL(data);
         document.getElementById("save-ref").href = saved_file;
-        document.getElementById("save-button").innerText = "Saved, hit the link.";
+        document.getElementById("save-button").innerText = "Saved " + transforms_list[0].length + " matrices , hit the link.";
       }
 
       document.getElementById("save-button").addEventListener("click", save_file)
@@ -163,11 +164,14 @@
         for (let inputSource of session.inputSources) {
           let targetRayPose = frame.getPose(inputSource.targetRaySpace, refSpace);
           if (inputSource.targetRayMode === 'tracked-pointer' && tracking) {
-            if(typeof transforms_list[input_source_id] === 'undefined') {
-              transforms_list[input_source_id] = []
+            let current_time = Date.now()
+            if(current_time - last_time > 41){ // run at approx 24 frames per second
+              last_time = current_time;
+              if(typeof transforms_list[input_source_id] === 'undefined') {
+                transforms_list[input_source_id] = []
+              }
+              transforms_list[input_source_id].push(targetRayPose.transform.matrix)
             }
-            transforms_list[input_source_id].push(targetRayPose.transform.matrix)
-
           }
           input_source_id++;
         }
