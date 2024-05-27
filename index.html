@@ -19,7 +19,7 @@
             The file contains two int32 that say the # of controllers and then the number of matrices per controller.
             Then all the float32 matrix elements in group of 16 for controller 1.
              Then controller 2.
-            v0.3
+            v0.4
           </p>
           <div id="session-info"></div>
           <div id="pose"></div>
@@ -165,7 +165,7 @@
 
       let tracking_last = false;
       function ProcessGamepad(gamepad, hand,source) {
-        if(hand === "right"){
+        if(hand == "right"){
           tracking_last = tracking;
           tracking = gamepad.buttons.length >= 1 && gamepad.buttons[1].pressed;
           if(tracking_last !== tracking) {
