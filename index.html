@@ -112,9 +112,23 @@
         gl = null;
       }
 
+      function updateInputSources(session, frame, refSpace) {
+        for (let inputSource of session.inputSources) {
+          let targetRayPose = frame.getPose(inputSource.targetRaySpace, refSpace);
+          if (!targetRayPose) {
+            continue;
+          }
+          if (inputSource.targetRayMode == 'tracked-pointer') {
+            console.log(targetRayPose.transform)
+          }
+        }
+      }
+
       function onXRFrame(t, frame) {
         let session = frame.session;
         session.requestAnimationFrame(onXRFrame);
+
+        updateInputSources(session, frame, refSpace);
 
         gl.bindFramebuffer(gl.FRAMEBUFFER, session.renderState.baseLayer.framebuffer);
 
