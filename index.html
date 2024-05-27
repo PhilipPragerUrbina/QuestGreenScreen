@@ -19,7 +19,7 @@
             The file contains two int32 that say the # of controllers and then the number of matrices per controller.
             Then all the float32 matrix elements in group of 16 for controller 1.
              Then controller 2.
-            v0.5
+            v0.6
           </p>
           <div id="session-info"></div>
           <div id="pose"></div>
@@ -158,9 +158,10 @@
       document.getElementById("save-button").addEventListener("click", save_file)
 
       let tracking = false;
-      function updateInputSources(session, frame) {
+      function updateInputSources(session, frame,refSpace) {
         let input_source_id = 0;
         for (let inputSource of session.inputSources) {
+          let targetRayPose = frame.getPose(inputSource.targetRaySpace, refSpace);
           if (inputSource.targetRayMode === 'tracked-pointer' && tracking) {
             if(typeof transforms_list[input_source_id] === 'undefined') {
               transforms_list[input_source_id] = []
@@ -195,7 +196,7 @@
           }
         }
 
-        updateInputSources(session, frame);
+        updateInputSources(session, frame,xrRefSpace);
 
         gl.bindFramebuffer(gl.FRAMEBUFFER, session.renderState.baseLayer.framebuffer);
 
