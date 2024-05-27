@@ -25,7 +25,7 @@
           <div id="warning-zone"></div>
           <button id="xr-button" class="barebones-button" disabled>XR not found</button>
         </details>
-        <button id = "save-button" onclick="save_file()">Save recording</button>
+        <button id = "save-button">Save recording</button>
       </header>
     </div>
     <main style='text-align: center;'>
@@ -119,7 +119,9 @@
 
       function save_file(){
         // Write header with number of trackers and then number of matrices
-        if(transforms_list.length === 0) return;
+        if(transforms_list.length === 0) {
+          console.log("No recording yet.")
+          return;}
         let header_array = new Uint32Array(2)
         header_array[0] = transforms_list.length
         header_array[1] = transforms_list[0].length
@@ -143,6 +145,7 @@
         saved_file = window.URL.createObjectURL(data);
       }
 
+      document.getElementById("save-button").addEventListener("click", save_file)
 
       let tracking = false;
       function updateInputSources(session, frame, refSpace) {
@@ -164,7 +167,7 @@
         tracking_last = tracking;
         tracking = gamepad.buttons.length >= 1 && gamepad.buttons[1].pressed;
         if(tracking_last !== tracking) {
-          let pulse = source.gamepad.hapticActuators[0].pulse(0.8, 100);
+          let pulse = source.gamepad.hapticActuators[0].pulse(tracking_last ? 0.8 : 0.2, 100);
         }
       }
 
